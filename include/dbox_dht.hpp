@@ -4,7 +4,7 @@
 // e' molto importante che questo include...
 #include <Adafruit_Sensor.h>
 // preceda questo: 
-#include "dht.h"
+#include "DHT.h"
 // da https://github.com/adafruit/DHT-sensor-library/issues/62
 
 //#include "DHTesp.h"
