@@ -8,11 +8,14 @@
 
 void setup() {
   setupI2C();
+  setupDisplay();
+  printSplash(4000);
+
   #ifdef DEBUG
   setupSerial();
   #endif
   setupRTC();
-  setupDisplay();
+  
   setupRele();
   setupDH11();
 }

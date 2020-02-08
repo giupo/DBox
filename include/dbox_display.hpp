@@ -3,7 +3,7 @@
 
 #include "Wire.h"
 #include "LiquidCrystal_I2C.h"
-
+#include "dbox_version.hpp"
 #define I2C_LCD_ADDRESS  0x3F
 
 // set the LCD number of columns and rows
@@ -19,7 +19,7 @@ LiquidCrystal_I2C lcd(I2C_LCD_ADDRESS, lcdColumns, lcdRows);
 void setupDisplay() {
   // initialize LCD
   lcd.init();
-  lcd.begin(3 , lcdRows);
+  lcd.begin(lcdColumns , lcdRows);
   // turn on LCD backlight                      
   lcd.backlight();
 }
@@ -41,7 +41,7 @@ void printTime(int second, int minute, int hour, int year, int month, int date) 
   //Temperatura[7] = temperatura % 10 + 48;
   //Temperatura[6] = temperatura / 10 + 48;
 
-  lcd.setCursor(0, 0);
+  lcd.setCursor(1, 0);
   lcd.print(Time);
   lcd.setCursor(0, 1);
   lcd.print(Calendar);
@@ -62,9 +62,21 @@ void printDHT(float temp, float humid) {
 
 #ifdef DEBUG
 void printHelloWorld() {
-    lcd.setCursor(0, 0);
-    lcd.print("Hello World");
+  lcd.setCursor(0, 0);
+  lcd.print("Hello World");
 }
 #endif
+
+void printSplash(int timeDelay) {
+  lcd.clear();
+  lcd.setCursor(0, 2);
+  lcd.print("DBox");
+  lcd.print(", v");
+  lcd.print(VERSION);
+  lcd.setCursor(0, 3);
+  lcd.print("by Giupao");
+  delay(timeDelay);
+  lcd.clear();
+}
 
 #endif
