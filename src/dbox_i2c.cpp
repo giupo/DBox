@@ -1,7 +1,4 @@
-#ifndef I2C_UTILS
-#define I2C_UTILS
-#include "Arduino.h"
-#include "Wire.h"
+#include "dbox_i2c.hpp"
 
 void setupI2C() {
   Wire.begin();
@@ -44,5 +41,3 @@ void scanI2C() {
   }
   delay(5000);          
 }
-
-#endif
