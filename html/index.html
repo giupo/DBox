@@ -13,7 +13,7 @@
     h2 { font-size: 2.0rem; }
     p { font-size: 1.5rem; }
     .units { font-size: 1.0rem; }
-    .dht-labels{
+    .labels {
       font-size: 1.0rem;
       vertical-align:middle;
       padding-bottom: 15px;
@@ -27,44 +27,33 @@
       color: rgb(99,152,143);
     }
     
-    .button {
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-    }
-
-    .button1 {border-radius: 2px;}
-    .button2 {border-radius: 4px;}
-    .button3 {border-radius: 8px;}
-    .button4 {border-radius: 12px;}
-    .button5 {border-radius: 50%;}
 
   </style>
 </head>
 <body>
   <h2>DBOX Server</h2>
   <p>
-    <span class="dht-labels">Temperature</span> 
+    <span class="labels">Temperature</span> 
     <span class="temperature">%TEMPERATURE%</span>
     <sup class="units">&deg;C</sup>
   </p>
   <p>
-    <span class="dht-labels">Humidity</span>
+    <span class="labels">Humidity</span>
     <span class="humidity">%HUMIDITY%</span>
     <sup class="units">%</sup>
   </p>
-  <p>
-    SSID <input type="text" name="ssid">
-    Passkey <input type="text" name="passkey">
-    <input type="button" class="button button4" onclick="updateWifi();" value="Apply" />
-  </p>
-
+  <div id="wifi">
+    <p class"labels">
+      SSID <input type="text" id="ssid" name="ssid"/>
+    </p>
+    <p class=labels">
+      Passkey <input type="text" id="passkey" name="passkey"/>
+    </p>
+    <p class="labels">
+      <input type="button" class="button button4" onclick="updateWifi();" value="Apply" />
+    </p>
+  </div>
+  <p id="status" class="status"></p>
   <script>
     setInterval(function ( ) {
       var xhttp = new XMLHttpRequest();
@@ -87,11 +76,42 @@
       xhttp.open("GET", "/humidity", true);
       xhttp.send();
     }, 3000 ) ;
-
-  var updateWifi = function() {
-    console.log("ciao mondo");
-    alert("ciao mondo");
+ 
+  var statusMessage = function(message) {
+    document.getElementById("status").innerHTML = message;
   };
+
+  var value = function(id) {
+    return document.getElementById(id).value;
+  };
+
+  var updateWifi = function() {    
+    var xhttp = new XMLHttpRequest();
+    var ssid = value("ssid");
+    var passkey = value("passkey");
+
+    if (ssid == "" || passkey == "") {
+      statusMessage("ssid or passkey cannot be void");
+    } else {
+      statusMessage("Updating WiFi...");
+    }
+
+    var params = "ssid=" + ssid + "&passkey=" + passkey;    
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        statusMessage("Wi-Fi saved");
+        removeElement("wifi");
+      }
+    };
+    xhttp.open("POST", "/updateWifi", true);
+    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhttp.send(params);
+  };
+
+  var removeElement = function(id) {
+    var elem = document.getElementById(id);
+    return elem.parentNode.removeChild(elem);
+  }
 </script>
 </body>
 </html>

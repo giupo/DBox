@@ -72,16 +72,18 @@ const char index_html[] PROGMEM = R"rawliteral(
     <span class="humidity">%HUMIDITY%</span>
     <sup class="units">%</sup>
   </p>
-  <p class"labels">
-    SSID <input type="text" name="ssid"/>
-  </p>
-  <p class=labels">
-    Passkey <input type="text" name="passkey"/>
-  </p>
-  <p class="labels">
-    <input type="button" class="button button4" onclick="updateWifi();" value="Apply" />
-  </p>
-
+  <div id="wifi">
+    <p class"labels">
+      SSID <input type="text" id="ssid" name="ssid"/>
+    </p>
+    <p class=labels">
+      Passkey <input type="text" id="passkey" name="passkey"/>
+    </p>
+    <p class="labels">
+      <input type="button" class="button button4" onclick="updateWifi();" value="Apply" />
+    </p>
+  </div>
+  <p id="status" class="status"></p>
   <script>
     setInterval(function ( ) {
       var xhttp = new XMLHttpRequest();
@@ -104,11 +106,42 @@ const char index_html[] PROGMEM = R"rawliteral(
       xhttp.open("GET", "/humidity", true);
       xhttp.send();
     }, 3000 ) ;
-
-  var updateWifi = function() {
-    console.log("ciao mondo");
-    alert("ciao mondo");
+ 
+  var statusMessage = function(message) {
+    document.getElementById("status").innerHTML = message;
   };
+
+  var value = function(id) {
+    return document.getElementById(id).value;
+  };
+
+  var updateWifi = function() {    
+    var xhttp = new XMLHttpRequest();
+    var ssid = value("ssid");
+    var passkey = value("passkey");
+
+    if (ssid == "" || passkey == "") {
+      statusMessage("ssid or passkey cannot be void");
+    } else {
+      statusMessage("Updating WiFi...");
+    }
+
+    var params = "ssid=" + ssid + "&passkey=" + passkey;    
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        statusMessage("Wi-Fi saved");
+        removeElement("wifi");
+      }
+    };
+    xhttp.open("POST", "/updateWifi", true);
+    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhttp.send(params);
+  };
+
+  var removeElement = function(id) {
+    var elem = document.getElementById(id);
+    return elem.parentNode.removeChild(elem);
+  }
 </script>
 </body>
 </html>
